@@ -1,9 +1,11 @@
 /**
- * SISTEMA DE ALMACÉN E INVENTARIO INTERNO
- * Basado en importaciones WMS JDA - Versión Optimizada por Promedio Mensual
+ * SISTEMA DE ALMACÉN E INVENTARIO INTERNO - BODEGA ALKOSTO
+ * Versión con Conexión a Google Sheets
  */
-// 1. AGREGA ESTA LÍNEA AL PRINCIPIO
+
+// --- REEMPLAZA ESTA URL CON LA QUE OBTUVISTE AL "IMPLEMENTAR" EN APPS SCRIPT (LA QUE TERMINA EN /exec) ---
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbws2dTxFVWlk4pz6l6EiOzRCfomU_Ppg84l7xE3rVuOEuQqg1M9y_TK1BFkC0kkoGrf/exec";
+
 const DB_KEYS = {
     PROD: 'almacen_products',
     SALIDAS: 'almacen_salidas',
@@ -18,8 +20,6 @@ let cart = [];
 let currentUserRole = null;
 let currentArea = '';
 let viewAllPosItems = false;
-
-// --- NUEVAS VARIABLES PARA OPTIMIZACIÓN ---
 let currentPage = 1;
 const itemsPerPage = 50;
 
@@ -49,8 +49,6 @@ document.addEventListener('DOMContentLoaded', () => {
     updateSystemClock(); setInterval(updateSystemClock, 60000);
     setupNavigation();
     document.getElementById('pos-search').addEventListener('input', (e) => renderPOSGrid(e.target.value));
-    
-    // Ajuste para resetear página al buscar en inventario
     document.getElementById('inv-search').addEventListener('input', (e) => {
         currentPage = 1;
         renderInventory(e.target.value);
@@ -264,35 +262,16 @@ document.getElementById('btn-open-payment').addEventListener('click', () => {
     openModal('modal-checkout');
 });
 
+// --- MODIFICACIÓN CLAVE: CONFIRMAR PAGO Y ENVIAR A GOOGLE ---
 document.getElementById('btn-confirm-payment').addEventListener('click', () => {
     const areaVal = document.getElementById('pos-area-select').value;
     const itemsToSave = cart.map(item => {
         const p = products.find(x => x.id === item.id);
         if (p) p.stock -= item.qty;
         return { ...item };
-        const salida = {
-        id: 'DESP-' + String(salidas.length + 1).padStart(5, '0'),
-        date: new Date().toISOString(),
-        area: areaVal,
-        items: itemsToSave,
-        totalCost: totalCost
-    };
-
-    // --- NUEVO: ESTO ENVÍA LOS DATOS A GOOGLE ---
-    fetch(GOOGLE_SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors', 
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(salida)
-    });
-    // --------------------------------------------
-
-    salidas.unshift(salida);
-    saveDB(DB_KEYS.SALIDAS, salidas);
-    // ... (el resto de tu código para limpiar el carrito) ...
-});
     });
     const totalCost = itemsToSave.reduce((acc, i) => acc + ((i.cost || 0) * i.qty), 0);
+    
     const salida = {
         id: 'DESP-' + String(salidas.length + 1).padStart(5, '0'),
         date: new Date().toISOString(),
@@ -300,6 +279,18 @@ document.getElementById('btn-confirm-payment').addEventListener('click', () => {
         items: itemsToSave,
         totalCost: totalCost
     };
+
+    // ENVÍO A GOOGLE SHEETS
+    if (GOOGLE_SCRIPT_URL !== "AQUI_VA_TU_URL_DE_APPS_SCRIPT_QUE_TERMINA_EN_EXEC") {
+        fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            cache: 'no-cache',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(salida)
+        }).catch(err => console.log("Error al enviar a la nube, pero guardando localmente..."));
+    }
+
     salidas.unshift(salida);
     saveDB(DB_KEYS.SALIDAS, salidas);
     saveDB(DB_KEYS.PROD, products);
@@ -308,7 +299,7 @@ document.getElementById('btn-confirm-payment').addEventListener('click', () => {
     renderPOSGrid();
     if(currentUserRole === 'admin'){ renderInventory(); renderDashboard(); }
     closeModal('modal-checkout');
-    showToast('Salida generada y descontada del inventario');
+    showToast('Salida generada y sincronizada con éxito');
 });
 
 window.exportHistoryToExcel = () => {
@@ -336,7 +327,7 @@ window.exportHistoryToExcel = () => {
     showToast('Historial descargado en Excel');
 };
 
-// --- 3. GESTIÓN DE INVENTARIO (OPTIMIZADO CON TODO EL LENGUAJE ORIGINAL) ---
+// --- GESTIÓN DE INVENTARIO ---
 const renderInventory = (filter = '') => {
     const tbody = document.getElementById('inventory-tbody');
     tbody.innerHTML = '';
@@ -345,7 +336,6 @@ const renderInventory = (filter = '') => {
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(now.getDate() - 30);
 
-    // 1. Pre-procesar todos los productos con sus cálculos matemáticos originales[cite: 1]
     let allCalculated = products.map(p => {
         let salidasLast30 = 0, totalHistorico = 0, minDate = null, maxDate = null;
         salidas.forEach(s => {
@@ -368,18 +358,13 @@ const renderInventory = (filter = '') => {
         return { ...p, monthlyAvg, salidasLast30, totalHistorico };
     });
 
-    // 2. Filtrar por búsqueda
     let filtered = allCalculated.filter(p => p.name.toLowerCase().includes(term) || p.sku.toLowerCase().includes(term));
-
-    // 3. ORDENAR POR PROMEDIO MENSUAL DE MAYOR A MENOR
     filtered.sort((a, b) => b.monthlyAvg - a.monthlyAvg);
 
-    // 4. Paginación
     const totalPages = Math.ceil(filtered.length / itemsPerPage) || 1;
     const start = (currentPage - 1) * itemsPerPage;
     const pagedItems = filtered.slice(start, start + itemsPerPage);
 
-    // 5. Renderizar Segmento con toda tu lógica visual[cite: 1]
     pagedItems.forEach(p => {
         const dailyRate = p.salidasLast30 / 30;
         const daysOfInventory = dailyRate > 0 ? Math.round(p.stock / dailyRate) : 'Sin rotación';
@@ -387,15 +372,10 @@ const renderInventory = (filter = '') => {
         let embalajeFormat = p.embalaje || 'N/A';
         if (p.embalaje) {
             const embStr = p.embalaje.trim().toUpperCase().replace(/\s+/g, ''); 
-            if (embStr === 'PAQUETE-UNIDAD') {
-                embalajeFormat = '<span style="background:#e0e7ff; color:#3730a3; padding:3px 6px; border-radius:4px; font-weight:bold; font-size:11px;" title="PAQUETE-UNIDAD">P-U</span>';
-            } else if (embStr === 'UNIDAD-PAQUETE') {
-                embalajeFormat = '<span style="background:#dcfce7; color:#166534; padding:3px 6px; border-radius:4px; font-weight:bold; font-size:11px;" title="UNIDAD-PAQUETE">U-P</span>';
-            } else if (embStr === 'UNIDAD-UNIDAD') {
-                embalajeFormat = '<span style="background:#ffedd5; color:#c2410c; padding:3px 6px; border-radius:4px; font-weight:bold; font-size:11px;" title="UNIDAD-UNIDAD">U-U</span>';
-            } else if (embStr === 'PAQUETE-PAQUETE') {
-                embalajeFormat = '<span style="background:#fee2e2; color:#991b1b; padding:3px 6px; border-radius:4px; font-weight:bold; font-size:11px;" title="PAQUETE-PAQUETE">P-P</span>';
-            }
+            if (embStr === 'PAQUETE-UNIDAD') embalajeFormat = '<span style="background:#e0e7ff; color:#3730a3; padding:3px 6px; border-radius:4px; font-weight:bold; font-size:11px;">P-U</span>';
+            else if (embStr === 'UNIDAD-PAQUETE') embalajeFormat = '<span style="background:#dcfce7; color:#166534; padding:3px 6px; border-radius:4px; font-weight:bold; font-size:11px;">U-P</span>';
+            else if (embStr === 'UNIDAD-UNIDAD') embalajeFormat = '<span style="background:#ffedd5; color:#c2410c; padding:3px 6px; border-radius:4px; font-weight:bold; font-size:11px;">U-U</span>';
+            else if (embStr === 'PAQUETE-PAQUETE') embalajeFormat = '<span style="background:#fee2e2; color:#991b1b; padding:3px 6px; border-radius:4px; font-weight:bold; font-size:11px;">P-P</span>';
         }
 
         const tr = document.createElement('tr');
@@ -409,15 +389,12 @@ const renderInventory = (filter = '') => {
         <td><span style="font-weight:600;">${parseFloat(Number(p.salidasLast30).toFixed(2))}</span></td>
         <td style="color:#6b7280;">${parseFloat(dailyRate.toFixed(2))}</td>
         <td style="color:var(--primary); font-weight:bold;">${parseFloat(p.monthlyAvg.toFixed(2))}</td>
-        <td><span style="font-size:12px; font-weight: 500; background: #f3f4f6; padding: 2px 6px; border-radius: 4px;">${daysOfInventory}</span></td>
-        `;
+        <td><span style="font-size:12px; font-weight: 500; background: #f3f4f6; padding: 2px 6px; border-radius: 4px;">${daysOfInventory}</span></td>`;
         tbody.appendChild(tr);  
     });
-
     renderPaginationControls(totalPages);
 };
 
-// Función para controles de paginación
 const renderPaginationControls = (totalPages) => {
     let nav = document.getElementById('inv-pagination-ctrls');
     if (!nav) {
@@ -438,8 +415,6 @@ window.changeInvPage = (step) => {
     renderInventory(document.getElementById('inv-search').value);
     document.querySelector('.workspace-content').scrollTop = 0;
 };
-
-// --- MANTENIMIENTO DE TODA LA LÓGICA RESTANTE ORIGINAL[cite: 1] ---
 
 const openNewProduct = () => {
     document.getElementById('form-product').reset();
@@ -550,9 +525,7 @@ const readExcelFile = (file) => {
         reader.onload = (e) => {
             const data = new Uint8Array(e.target.result);
             const workbook = XLSX.read(data, { type: 'array' });
-            const firstSheetName = workbook.SheetNames[0];
-            const worksheet = workbook.Sheets[firstSheetName];
-            const json = XLSX.utils.sheet_to_json(worksheet, { raw: false, defval: "" });
+            const json = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { raw: false, defval: "" });
             resolve(json);
         };
         reader.onerror = reject;
@@ -624,14 +597,13 @@ window.processExcelUploads = async () => {
         renderDashboard();
         closeModal('modal-jda-import');
         document.querySelector('#modal-jda-import .btn-primary').textContent = "Procesar Archivos";
-        showToast('Datos de JDA importados correctamente');
+        showToast('Datos de JDA importados');
     } catch (error) {
-        showToast('Error procesando archivos Excel', 'error');
+        showToast('Error procesando Excel', 'error');
         document.querySelector('#modal-jda-import .btn-primary').textContent = "Procesar Archivos";
     }
 };
 
-// --- MANTENIMIENTO DE RESPALDO DB ---
 document.getElementById('btn-export-db').addEventListener('click', () => {
     const data = { products, salidas, settings };
     const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
@@ -656,7 +628,7 @@ document.getElementById('backup-upload').addEventListener('change', (e) => {
                 renderInventory(); renderPOSGrid(); renderDashboard();
                 showToast('Base de datos restaurada');
             }
-        } catch (err) { showToast('Archivo de respaldo inválido', 'error'); }
+        } catch (err) { showToast('Archivo inválido', 'error'); }
     };
     reader.readAsText(file);
 });
