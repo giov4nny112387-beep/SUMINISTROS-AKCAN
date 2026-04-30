@@ -2,7 +2,8 @@
  * SISTEMA DE ALMACÉN E INVENTARIO INTERNO
  * Basado en importaciones WMS JDA - Versión Optimizada por Promedio Mensual
  */
-
+// 1. AGREGA ESTA LÍNEA AL PRINCIPIO
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbws2dTxFVWlk4pz6l6EiOzRCfomU_Ppg84l7xE3rVuOEuQqg1M9y_TK1BFkC0kkoGrf/exec";
 const DB_KEYS = {
     PROD: 'almacen_products',
     SALIDAS: 'almacen_salidas',
@@ -269,6 +270,27 @@ document.getElementById('btn-confirm-payment').addEventListener('click', () => {
         const p = products.find(x => x.id === item.id);
         if (p) p.stock -= item.qty;
         return { ...item };
+        const salida = {
+        id: 'DESP-' + String(salidas.length + 1).padStart(5, '0'),
+        date: new Date().toISOString(),
+        area: areaVal,
+        items: itemsToSave,
+        totalCost: totalCost
+    };
+
+    // --- NUEVO: ESTO ENVÍA LOS DATOS A GOOGLE ---
+    fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors', 
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(salida)
+    });
+    // --------------------------------------------
+
+    salidas.unshift(salida);
+    saveDB(DB_KEYS.SALIDAS, salidas);
+    // ... (el resto de tu código para limpiar el carrito) ...
+});
     });
     const totalCost = itemsToSave.reduce((acc, i) => acc + ((i.cost || 0) * i.qty), 0);
     const salida = {
