@@ -15,7 +15,7 @@ let salidas = JSON.parse(localStorage.getItem(DB_KEYS.SALIDAS)) ||[];
 let pedidosLocal = JSON.parse(localStorage.getItem(DB_KEYS.PEDIDOS)) ||[];
 let settings = JSON.parse(localStorage.getItem(DB_KEYS.SET)) || { adminPass: 'ADMIN1' };
 
-let cart =[];
+let cart =[https://script.google.com/macros/s/AKfycbxUA55zaQPuv8pTQEttTzBQxitvR36PcS_oImB3EWnORg9mpZCcrV4gUvnk1x7Pwvr0/exec];
 let currentUserRole = null;
 let currentArea = '';
 let viewAllPosItems = false;
@@ -24,7 +24,7 @@ let currentPage = 1;
 const itemsPerPage = 50;
 
 // URL DEL SCRIPT DE GOOGLE SHEETS
-const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbws2dTxFVWlk4pz6l6EiOzRCfomU_Ppg84l7xE3rVuOEuQqg1M9y_TK1BFkC0kkoGrf/exec';
+const GOOGLE_SHEETS_URL = '';
 
 const formatMoney = (amount) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(amount);
 const generateId = (prefix) => prefix + '-' + Math.random().toString(36).substr(2, 6).toUpperCase();
