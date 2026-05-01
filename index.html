@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Almacén y Bodega de Insumos V5.1</title>
+    <title>Almacén y Bodega de Insumos V5.2</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- LIBRERÍA PARA LEER Y EXPORTAR EXCEL -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -15,7 +14,7 @@
 
     <!-- LOGIN -->
     <div id="modal-login-fullscreen" style="position:fixed; inset:0; background:#111827; display:flex; align-items:center; justify-content:center; z-index:9999;">
-        <div style="background:white; padding:40px; border-radius:12px; width:100%; max-width:400px; text-align:center; box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);">
+        <div style="background:white; padding:40px; border-radius:12px; width:90%; max-width:400px; text-align:center; box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);">
             <i class='bx bx-box' style="font-size: 60px; color: var(--primary); margin-bottom: 15px;"></i>
             <h2 style="font-size: 24px; margin-bottom: 5px; color: #111827;">Bodega de Suministros</h2>
             <p style="color: #6b7280; font-size: 14px; margin-bottom: 30px;">Selecciona tu perfil de ingreso</p>
@@ -34,28 +33,17 @@
                 <div>
                     <label style="font-size: 13px; font-weight: 600; margin-bottom: 8px; display: block; color: #374151;">Seleccione su Área de Destino:</label>
                     <select id="login-coord-area" style="width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 8px; outline: none; font-size: 15px; background: white;">
-                        <option value="MERCADO">MERCADO</option>
-                        <option value="ELECTRO">ELECTRO</option>
-                        <option value="ADMIN">ADMIN</option>
-                        <option value="MERCHA">MERCHA</option>
-                        <option value="CARNES">CARNES</option>
-                        <option value="FRESCOS">FRESCOS</option>
-                        <option value="MONTA">MONTA</option>
-                        <option value="CAJAS">CAJAS</option>
-                        <option value="AUTO">AUTO</option>
-                        <option value="BODEGA">BODEGA</option>
-                        <option value="AKOMER">AKOMER</option>
-                        <option value="SEGURIDAD">SEGURIDAD</option>
-                        <option value="SST">SST</option>
-                        <option value="HOGAR">HOGAR</option>
-                        <option value="SER G">SER G</option>
-                        <option value="ENFER">ENFER</option>
-                        <option value="SER CLIENT">SER CLIENT</option>
-                        <option value="MTTO">MTTO</option>
-                        <option value="CAMBIOS">CAMBIOS</option>
-                        <option value="BUNKER">BUNKER</option>
-                        <option value="INVEN">INVEN</option>
-                        <option value="SALPRE">SALPRE</option>
+                        <option value="MERCADO">MERCADO</option><option value="ELECTRO">ELECTRO</option>
+                        <option value="ADMIN">ADMIN</option><option value="MERCHA">MERCHA</option>
+                        <option value="CARNES">CARNES</option><option value="FRESCOS">FRESCOS</option>
+                        <option value="MONTA">MONTA</option><option value="CAJAS">CAJAS</option>
+                        <option value="AUTO">AUTO</option><option value="BODEGA">BODEGA</option>
+                        <option value="AKOMER">AKOMER</option><option value="SEGURIDAD">SEGURIDAD</option>
+                        <option value="SST">SST</option><option value="HOGAR">HOGAR</option>
+                        <option value="SER G">SER G</option><option value="ENFER">ENFER</option>
+                        <option value="SER CLIENT">SER CLIENT</option><option value="MTTO">MTTO</option>
+                        <option value="CAMBIOS">CAMBIOS</option><option value="BUNKER">BUNKER</option>
+                        <option value="INVEN">INVEN</option><option value="SALPRE">SALPRE</option>
                         <option value="INSTI">INSTI</option>
                     </select>
                 </div>
@@ -86,7 +74,7 @@
                 <div class="brand-icon" id="main-sidebar-logo"><i class='bx bx-box'></i></div>
                 <div class="brand-info">
                     <h1 id="brand-name-display">Almacén Central</h1>
-                    <span class="version-badge">Bodega V5.1</span>
+                    <span class="version-badge">Bodega V5.2</span>
                 </div>
             </div>
             <div class="sidebar-menu">
@@ -96,7 +84,7 @@
                 <span class="menu-heading mt-4 admin-only-element">ADMINISTRACIÓN</span>
                 <button class="menu-item admin-only-element" data-target="inventory"><i class='bx bx-data'></i> Gestión de Inventario</button>
                 <button class="menu-item admin-only-element" id="menu-dashboard" data-target="dashboard"><i class='bx bx-bar-chart-alt-2'></i> Panel de Análisis</button>
-                <button class="menu-item admin-only-element" onclick="exportHistoryToExcel()"><i class='bx bx-export'></i> Exportar Salidas (Excel)</button>
+                <button class="menu-item admin-only-element" onclick="exportHistoryToExcel()"><i class='bx bx-export'></i> Exportar Salidas</button>
                 
                 <span class="menu-heading mt-4 admin-only-element">SISTEMA JDA</span>
                 <button class="menu-item admin-only-element" onclick="openModal('modal-jda-import')"><i class='bx bx-import'></i> Importar Datos JDA</button>
@@ -111,7 +99,10 @@
 
         <main class="erp-workspace no-print">
             <header class="workspace-header">
-                <div class="header-left"><span id="current-datetime" class="sys-time">Cargando fecha...</span></div>
+                <div class="header-left">
+                    <button class="mobile-menu-btn" onclick="toggleMobileMenu()"><i class='bx bx-menu'></i></button>
+                    <span id="current-datetime" class="sys-time">Cargando fecha...</span>
+                </div>
                 <div class="header-right">
                     <div class="user-profile" title="Perfil">
                         <div class="avatar" id="user-avatar">AD</div>
@@ -121,13 +112,13 @@
             </header>
 
             <div class="workspace-content">
-                <!-- 1. PLANTILLA DE PEDIDOS (Antiguo POS) -->
+                <!-- 1. PLANTILLA DE PEDIDOS -->
                 <section id="pos" class="view-section active">
                     <div class="pos-container">
                         <div class="pos-catalog">
-                            <div class="toolbar" style="display: flex; gap: 10px;">
-                                <div class="search-box" style="flex: 1;"><i class='bx bx-search'></i><input type="text" id="pos-search" placeholder="Buscar insumo por descripción o código..."></div>
-                                <button id="btn-toggle-pos-view" class="btn-secondary" onclick="togglePosView()" style="display: none;"><i class='bx bx-list-ul'></i> Ver Todos los Insumos</button>
+                            <div class="toolbar" style="display: flex; gap: 10px; flex-wrap:wrap;">
+                                <div class="search-box" style="flex: 1; min-width: 200px;"><i class='bx bx-search'></i><input type="text" id="pos-search" placeholder="Buscar insumo por descripción o código..."></div>
+                                <button id="btn-toggle-pos-view" class="btn-secondary" onclick="togglePosView()" style="display: none;"><i class='bx bx-list-ul'></i> Ver Todos</button>
                             </div>
                             <div class="catalog-grid" id="pos-grid"></div>
                         </div>
@@ -136,30 +127,19 @@
                                 <h3>Nuevo Pedido de Insumos</h3>
                                 <div class="form-group" style="margin-top: 10px;">
                                     <label>Área Solicitante:</label>
-                                    <select id="pos-area-select" onchange="renderPOSGrid(document.getElementById('pos-search').value)" style="width:100%; padding:10px; border-radius:6px; border:1px solid var(--border); background: #f3f4f6;"></select>    
-                                    <option value="MERCADO">MERCADO</option>
-                                    <option value="ELECTRO">ELECTRO</option>
-                                    <option value="ADMIN">ADMIN</option>
-                                    <option value="MERCHA">MERCHA</option>
-                                    <option value="CARNES">CARNES</option>
-                                    <option value="FRESCOS">FRESCOS</option>
-                                    <option value="MONTA">MONTA</option>
-                                    <option value="CAJAS">CAJAS</option>
-                                    <option value="AUTO">AUTO</option>
-                                    <option value="BODEGA">BODEGA</option>
-                                    <option value="AKOMER">AKOMER</option>
-                                    <option value="SEGURIDAD">SEGURIDAD</option>
-                                    <option value="SST">SST</option>
-                                    <option value="HOGAR">HOGAR</option>
-                                    <option value="SER G">SER G</option>
-                                    <option value="ENFER">ENFER</option>
-                                    <option value="SER CLIENT">SER CLIENT</option>
-                                    <option value="MTTO">MTTO</option>
-                                    <option value="CAMBIOS">CAMBIOS</option>
-                                    <option value="BUNKER">BUNKER</option>
-                                    <option value="INVEN">INVEN</option>
-                                    <option value="SALPRE">SALPRE</option>
-                                    <option value="INSTI">INSTI</option>
+                                    <select id="pos-area-select" onchange="renderPOSGrid(document.getElementById('pos-search').value)" style="width:100%; padding:10px; border-radius:6px; border:1px solid var(--border); background: #f3f4f6;">
+                                        <option value="MERCADO">MERCADO</option><option value="ELECTRO">ELECTRO</option>
+                                        <option value="ADMIN">ADMIN</option><option value="MERCHA">MERCHA</option>
+                                        <option value="CARNES">CARNES</option><option value="FRESCOS">FRESCOS</option>
+                                        <option value="MONTA">MONTA</option><option value="CAJAS">CAJAS</option>
+                                        <option value="AUTO">AUTO</option><option value="BODEGA">BODEGA</option>
+                                        <option value="AKOMER">AKOMER</option><option value="SEGURIDAD">SEGURIDAD</option>
+                                        <option value="SST">SST</option><option value="HOGAR">HOGAR</option>
+                                        <option value="SER G">SER G</option><option value="ENFER">ENFER</option>
+                                        <option value="SER CLIENT">SER CLIENT</option><option value="MTTO">MTTO</option>
+                                        <option value="CAMBIOS">CAMBIOS</option><option value="BUNKER">BUNKER</option>
+                                        <option value="INVEN">INVEN</option><option value="SALPRE">SALPRE</option>
+                                        <option value="INSTI">INSTI</option>
                                     </select>
                                 </div>
                             </div>
@@ -167,41 +147,29 @@
                                 <div class="empty-state">Agregue insumos al pedido</div>
                             </div>
                             <div class="ticket-summary">
-                                <div class="summary-line"><span>Total Unidades Solicitadas:</span><strong id="pos-total-qty" style="font-size:16px;">0</strong></div>
-                                <button class="btn-checkout" id="btn-open-payment" disabled>Generar Salida de Bodega <i class='bx bx-send'></i></button>
+                                <div class="summary-line"><span>Total Unidades:</span><strong id="pos-total-qty" style="font-size:16px;">0</strong></div>
+                                <button class="btn-checkout" id="btn-open-payment" disabled>MONTAR INSUMOS <i class='bx bx-send'></i></button>
                             </div>
                         </div>
                     </div>
                 </section>
 
-                <!-- 2. PANEL DE ANÁLISIS (DASHBOARD) -->
+                <!-- 2. DASHBOARD -->
                 <section id="dashboard" class="view-section">
-                    <div class="page-header">
+                    <div class="page-header" style="flex-wrap: wrap;">
                         <h2>Panel de Análisis e Inteligencia de Bodega</h2>
-                        <button class="btn-primary" onclick="openDeepAnalytics()" style="background: #000; color: #fff;"><i class='bx bx-radar'></i> Análisis B2B Mensualizado</button>
+                        <button class="btn-primary mt-2" onclick="openDeepAnalytics()" style="background: #000; color: #fff;"><i class='bx bx-radar'></i> Análisis B2B Mensualizado</button>
                     </div>
                     <div class="kpi-grid">
-                        <div class="kpi-card highlight-card">
-                            <div class="kpi-title" style="color:#047857;">Valor Total del Inventario (Bodega)</div>
-                            <div class="kpi-value text-success" id="kpi-total-inv">$0</div>
-                            <div class="text-muted">Capital inmovilizado en el almacén</div>
-                        </div>
-                        <div class="kpi-card">
-                            <div class="kpi-title">Consumo de Insumos (Hoy)</div>
-                            <div class="kpi-value text-primary" id="kpi-daily-out">$0</div>
-                            <div class="text-muted">Valorizado de salidas de hoy</div>
-                        </div>
-                        <div class="kpi-card">
-                            <div class="kpi-title">Salidas de Insumos (Mes Actual)</div>
-                            <div class="kpi-value text-danger" id="kpi-month-out">$0</div>
-                            <div class="text-muted">Gasto interno del almacén</div>
-                        </div>
+                        <div class="kpi-card highlight-card"><div class="kpi-title" style="color:#047857;">Valor Total del Inventario (Bodega)</div><div class="kpi-value text-success" id="kpi-total-inv">$0</div><div class="text-muted">Capital inmovilizado en el almacén</div></div>
+                        <div class="kpi-card"><div class="kpi-title">Consumo de Insumos (Hoy)</div><div class="kpi-value text-primary" id="kpi-daily-out">$0</div><div class="text-muted">Valorizado de salidas de hoy</div></div>
+                        <div class="kpi-card"><div class="kpi-title">Salidas de Insumos (Mes Actual)</div><div class="kpi-value text-danger" id="kpi-month-out">$0</div><div class="text-muted">Gasto interno del almacén</div></div>
                     </div>
                 </section>
 
-                <!-- 3. ANÁLISIS B2B -->
+                <!-- 3. DEEP ANALYTICS -->
                 <section id="deep-analytics" class="view-section">
-                    <div class="page-header" style="margin-bottom: 15px;">
+                    <div class="page-header" style="margin-bottom: 15px; flex-wrap:wrap;">
                         <div>
                            <button class="btn-primary" onclick="window.closeDeepAnalytics()" style="background: #6b7280; color: #fff; margin-bottom: 10px;"><i class='bx bx-arrow-back'></i> Volver al Panel</button>
                             <h2><i class='bx bx-radar'></i> Reporte Mensual de Consumos</h2>
@@ -212,13 +180,13 @@
                         </div>
                     </div>
                     
-                    <div class="da-grid-kpi" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px;">
+                    <div class="da-grid-kpi" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
                         <div class="kpi-card highlight-card"><div class="kpi-title">Salidas Totales (Valorizado)</div><div class="kpi-value text-primary" id="da-out-val">$0</div><div class="text-muted">Costo total despachado en el mes</div></div>
-                        <div class="kpi-card"><div class="kpi-title">Referencias con Stock</div><div class="kpi-value text-success" id="da-refs-stock">0</div><div class="text-muted">Cant. de SKUs disponibles en bodega</div></div>
+                        <div class="kpi-card"><div class="kpi-title">Referencias con Stock</div><div class="kpi-value text-success" id="da-refs-stock">0</div><div class="text-muted">Cant. de SKUs en bodega</div></div>
                         <div class="kpi-card"><div class="kpi-title">Unidades Físicas en Bodega</div><div class="kpi-value" id="da-units-stock" style="color:#4b5563;">0</div><div class="text-muted">Conteo total de artículos</div></div>
                     </div>
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
                         <div class="data-panel" style="padding:15px; overflow-y:auto; max-height:400px;">
                             <h3 style="font-size:14px; margin-bottom:10px;">Top Áreas con mayor consumo</h3>
                             <ul id="da-top-areas" style="list-style:none; padding:0; font-size:13px;"></ul>
@@ -230,35 +198,38 @@
                     </div>
                 </section>
 
-                <!-- 4. INVENTARIO Y PEDIDOS -->
+                <!-- 4. INVENTARIO -->
                 <section id="inventory" class="view-section">
-                    <div class="page-header">
+                    <div class="page-header" style="flex-wrap: wrap;">
                         <h2>Gestión de Inventario y Pedidos</h2>
-                        <div>
-                            <button class="btn-primary" onclick="openModal('modal-jda-import')" style="background:#10b981; margin-right: 10px;"><i class='bx bx-import'></i> Importación Masiva Excel</button>
+                        <div style="margin-top: 10px;">
+                            <button class="btn-primary" onclick="openModal('modal-jda-import')" style="background:#10b981; margin-right: 10px;"><i class='bx bx-import'></i> Importación WMS Excel</button>
                             <button class="btn-primary" onclick="openNewProduct()"><i class='bx bx-plus'></i> Nuevo Artículo Manual</button>
                         </div>
                     </div>
                     
-                    <div class="data-panel table-container">
+                    <div class="data-panel">
                         <div class="panel-toolbar"><div class="search-box slim"><i class='bx bx-search'></i><input type="text" id="inv-search" placeholder="Filtrar por código o descripción..."></div></div>
-                        <table class="erp-table">
-                            <thead>
-                                <tr>
-                                    <th>Código</th>
-                                    <th>Descripción</th>
-                                    <th>UM</th> <!-- NUEVA COLUMNA -->
-                                    <th>Embalaje</th>
-                                    <th>Costo Unit.</th>
-                                    <th>Stock</th>
-                                    <th>Salidas 30D</th>
-                                    <th>Prom. Diario</th>
-                                    <th>Prom. Mensual</th>
-                                    <th>Proyección (Días)</th>
-                                </tr>
-                            </thead>
-                            <tbody id="inventory-tbody"></tbody>
-                        </table>
+                        <div class="table-container">
+                            <table class="erp-table">
+                                <thead>
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Descripción</th>
+                                        <th>UM</th>
+                                        <th>Embalaje</th>
+                                        <th>Costo Unit.</th>
+                                        <th>Stock</th>
+                                        <th style="color:var(--primary);">Pedido</th>
+                                        <th>Salidas 30D</th>
+                                        <th>Prom. Diario</th>
+                                        <th>Prom. Mensual</th>
+                                        <th>Proyección (Días)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="inventory-tbody"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </section>
 
@@ -266,72 +237,67 @@
         </main>
     </div>
 
-    <!-- MODAL: IMPORTAR EXCEL JDA -->
+    <!-- MODAL: RESUMEN DE SALIDA Y MONTAJE DE PEDIDO -->
+    <div id="modal-checkout" class="erp-modal-overlay">
+        <div class="erp-modal modal-sm">
+            <div class="modal-header"><h3>Confirmar Solicitud de Pedido</h3><button type="button" class="btn-close" onclick="closeModal('modal-checkout')"><i class='bx bx-x'></i></button></div>
+            <div class="modal-body text-center">
+                <h3 style="margin-bottom:10px;">Área: <span id="checkout-area-name" style="color:var(--primary);"></span></h3>
+                <p style="font-size:13px; color:#6b7280;">Este pedido será enviado y consolidado en la plataforma de control (Google Sheets).</p>
+                <textarea id="checkout-comment" placeholder="Comentarios del pedido (Opcional)..." style="width:100%; margin-top:15px; padding:10px; border-radius:6px; border:1px solid var(--border); font-family:var(--font-sys); outline:none; height:70px; resize:none;"></textarea>
+            </div>
+            <div class="modal-footer"><button type="button" id="btn-confirm-payment" class="btn-primary" style="width: 100%; padding: 14px; font-size: 15px;">Confirmar y Montar Pedido</button></div>
+        </div>
+    </div>
+
+    <!-- MODAL PARA VER IMAGEN DEL INSUMO -->
+    <div id="modal-image" class="erp-modal-overlay" onclick="closeModal('modal-image')">
+        <div class="erp-modal modal-sm" style="background:transparent; box-shadow:none; align-items:center;" onclick="event.stopPropagation()">
+            <img id="preview-image" src="" style="max-width:100%; max-height:70vh; border-radius:12px; background:#fff; padding:15px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+            <button class="btn-primary mt-2" onclick="closeModal('modal-image')" style="margin-top: 15px; border-radius: 20px;">Cerrar Imagen</button>
+        </div>
+    </div>
+
+    <!-- OTROS MODALES SE MANTIENEN IGUAL -->
     <div id="modal-jda-import" class="erp-modal-overlay">
         <div class="erp-modal" style="max-width: 600px;">
             <div class="modal-header"><h3>Carga Masiva - WMS JDA</h3><button type="button" class="btn-close" onclick="closeModal('modal-jda-import')"><i class='bx bx-x'></i></button></div>
             <div class="modal-body">
-                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Sube los archivos de Excel descargados de JDA para actualizar la base de datos local automáticamente.</p>
-                
+                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Sube los archivos de Excel descargados de JDA.</p>
                 <div style="border: 1px solid var(--border); padding: 15px; border-radius: 8px; margin-bottom: 15px; background: #f9fafb;">
-                    <h4 style="font-size: 14px; margin-bottom: 5px;">1. Inventario Actual</h4>
-                    <p style="font-size: 12px; color: #6b7280; margin-bottom: 10px;">Columnas requeridas: Número de artículo, Descripción, Cantidad Almacen, Costo (Opcional).</p>
-                    <input type="file" id="file-inventory" accept=".xlsx, .xls, .csv" style="font-size: 13px;">
+                    <h4 style="font-size: 14px; margin-bottom: 5px;">1. Inventario Actual</h4><input type="file" id="file-inventory" accept=".xlsx, .xls, .csv">
                 </div>
-
                 <div style="border: 1px solid var(--border); padding: 15px; border-radius: 8px; margin-bottom: 15px; background: #f9fafb;">
-                    <h4 style="font-size: 14px; margin-bottom: 5px;">2. Historial de Salidas</h4>
-                    <p style="font-size: 12px; color: #6b7280; margin-bottom: 10px;">Columnas: Número de artículo, Descripción, Cantidad Almacen, Área, Fecha agregada, Ubicación.</p>
-                    <input type="file" id="file-history" accept=".xlsx, .xls, .csv" style="font-size: 13px;">
+                    <h4 style="font-size: 14px; margin-bottom: 5px;">2. Historial de Salidas</h4><input type="file" id="file-history" accept=".xlsx, .xls, .csv">
                 </div>
-
                 <div style="border: 1px solid var(--border); padding: 15px; border-radius: 8px; background: #f9fafb;">
-                    <h4 style="font-size: 14px; margin-bottom: 5px;">3. Clasificación de Artículos</h4>
-                    <p style="font-size: 12px; color: #6b7280; margin-bottom: 10px;">Columnas requeridas: Número de artículo, UM, Pedido / trans.</p>
-                    <input type="file" id="file-classification" accept=".xlsx, .xls, .csv" style="font-size: 13px;">
+                    <h4 style="font-size: 14px; margin-bottom: 5px;">3. Clasificación de Artículos</h4><input type="file" id="file-classification" accept=".xlsx, .xls, .csv">
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn-secondary" onclick="closeModal('modal-jda-import')">Cancelar</button>
-                <button type="button" class="btn-primary" onclick="processExcelUploads()">Procesar Archivos</button>
-            </div>
+            <div class="modal-footer"><button type="button" class="btn-secondary" onclick="closeModal('modal-jda-import')">Cancelar</button><button type="button" class="btn-primary" onclick="processExcelUploads()">Procesar Archivos</button></div>
         </div>
     </div>
 
-    <!-- MODAL: PRODUCTO MANUAL -->
     <div id="modal-product" class="erp-modal-overlay">
         <div class="erp-modal" style="max-width: 500px;">
             <form id="form-product">
                 <div class="modal-header"><h3>Insumo / Artículo</h3><button type="button" class="btn-close" onclick="closeModal('modal-product')"><i class='bx bx-x'></i></button></div>
                 <div class="modal-body form-grid">
                     <input type="hidden" id="p-id">
-                    <div class="form-group col-12"><label>Código (Número de artículo)</label><input type="text" id="p-sku" required></div>
+                    <div class="form-group col-12"><label>Código</label><input type="text" id="p-sku" required></div>
                     <div class="form-group col-12"><label>Descripción</label><input type="text" id="p-name" required></div>
-                    <div class="form-group"><label>UM (Unidad Medida)</label><input type="text" id="p-um" placeholder="Ej: UN, CAJA"></div>
-                    <div class="form-group"><label>Embalaje (Pedido / trans)</label><input type="text" id="p-embalaje"></div>
-                    <div class="form-group"><label>Costo Unitario Referencia</label><input type="number" step="any" id="p-cost" required value="0"></div>
-                    <div class="form-group"><label id="label-p-stock">Stock Físico</label><input type="number" step="any" id="p-stock" required value="0"></div>
+                    <div class="form-group"><label>UM</label><input type="text" id="p-um"></div>
+                    <div class="form-group"><label>Embalaje</label><input type="text" id="p-embalaje"></div>
+                    <div class="form-group"><label>Costo</label><input type="number" step="any" id="p-cost" required value="0"></div>
+                    <div class="form-group"><label>Stock Físico</label><input type="number" step="any" id="p-stock" required value="0"></div>
                 </div>
                 <div class="modal-footer"><button type="button" class="btn-secondary" onclick="closeModal('modal-product')">Cancelar</button><button type="submit" class="btn-primary">Guardar</button></div>
             </form>
         </div>
     </div>
 
-    <!-- MODAL: RESUMEN DE SALIDA -->
-    <div id="modal-checkout" class="erp-modal-overlay">
-        <div class="erp-modal modal-sm">
-            <div class="modal-header"><h3>Confirmar Despacho</h3><button type="button" class="btn-close" onclick="closeModal('modal-checkout')"><i class='bx bx-x'></i></button></div>
-            <div class="modal-body text-center">
-                <h3 style="margin-bottom:10px;">Área: <span id="checkout-area-name" style="color:var(--primary);"></span></h3>
-                <p>Se descontarán las cantidades solicitadas del inventario.</p>
-            </div>
-            <div class="modal-footer"><button type="button" id="btn-confirm-payment" class="btn-primary" style="width: 100%; padding: 14px; font-size: 15px;">Confirmar Salida Definitiva</button></div>
-        </div>
-    </div>
-
-    <!-- TOASTS -->
     <div id="toast-container"></div>
-
     <script src="app.js"></script>
 </body>
 </html>
+
